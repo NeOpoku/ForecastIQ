@@ -21,22 +21,24 @@ class Weather {
 }
 
 // Define the WeatherService class
-class WeatherService {
-  getWeatherByCityName(cityName: any) {
+class WeatherService { 
+  getWeatherByCityName(_cityName: any) {
     throw new Error('Method not implemented.');
   }
-  private baseURL: string;
-  private apiKey: string;
 
+  private baseURL: string;
+  private apiKey: string | undefined;
   constructor() {
-    this.baseURL = 'https://api.openweathermap.org/data/2.5';
-    if (!process.env.WEATHER_API_KEY) {
-      throw new Error('WEATHER_API_KEY is not defined in the environment variables');
-    }
-    this.apiKey = process.env.WEATHER_API_KEY; // API key from .env
+    this.baseURL = 'https://api.openweathermap.org/';
+  const apiKey = process.env.WEATHER_API_KEY;
+  if (!apiKey) {
+    throw new Error('WEATHER_API_KEY is not defined in the environment variables');
   }
-  // Create fetchLocationData method
-  private async fetchLocationData(query: string): Promise<Coordinates> {
+  this.apiKey = apiKey;
+}
+
+// Create fetchLocationData method
+private async fetchLocationData(query: string): Promise<Coordinates> {
     const url = `${this.baseURL}/geo/1.0/direct?q=${query}&limit=1&appid=${this.apiKey}`;
     const response = await fetch(url);
 

@@ -30,6 +30,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "fs": "^0.0.1-security",
+    "node-fetch": "^3.3.2",
     "uuid": "^11.0.5"
   }
 }

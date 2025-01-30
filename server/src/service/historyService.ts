@@ -14,7 +14,7 @@ class City {
 
 // TODO: Complete the HistoryService class
 class HistoryService {
-  saveCityToHistory(cityName: any) {
+  saveCityToHistory(_cityName: any) {
     throw new Error('Method not implemented.');
   }
     filePath: string;
