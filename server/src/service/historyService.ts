@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import * as path from 'path';
+
 
 // TODO: Define a City class with name and id properties
 class City {
@@ -17,13 +17,10 @@ class HistoryService {
   saveCityToHistory(_cityName: any) {
     throw new Error('Method not implemented.');
   }
-    filePath: string;
-    constructor() {
-      this.filePath = path.join(path.resolve(), 'searchHistory.json');
-    }
+    
     async read() {
       try {
-        const data = await fs.promises.readFile(this.filePath, 'utf8');
+        const data = await fs.promises.readFile("db/db.json", 'utf8');
         return JSON.parse(data);
       } catch (error) {
         if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
@@ -34,7 +31,7 @@ class HistoryService {
       
     } 
     async write(data: City[]) {
-      await fs.promises.writeFile(this.filePath, JSON.stringify(data));
+      await fs.promises.writeFile("db/db.json", JSON.stringify(data));
     }
 
   async getCities() {

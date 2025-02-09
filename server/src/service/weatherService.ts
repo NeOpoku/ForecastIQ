@@ -57,8 +57,8 @@ class WeatherService {
    * Constructor for the WeatherService class
    */
   constructor() {
-    this.baseURL = 'https://api.openweathermap.org/';
-    const apiKey = process.env.WEATHER_API_KEY;
+    this.baseURL = 'https://api.openweathermap.org';
+    const apiKey = process.env.API_KEY;
     if (!apiKey) {
       throw new Error('WEATHER_API_KEY is not defined in the environment variables');
     }
@@ -116,6 +116,7 @@ class WeatherService {
       // Use the OpenWeatherMap API to fetch location data
       const url = `${this.baseURL}/geo/1.0/direct?q=${query}&limit=1&appid=${this.apiKey}`;
       const response = await fetch(url);
+      console.log('Hello from fetchLocationData:');
       // Handle errors and parse the response
       if (!response.ok) {
         throw new Error('Error fetching location data');
@@ -144,9 +145,16 @@ class WeatherService {
    */
   private async fetchWeatherData(coordinates: Coordinates): Promise<any> {
     try {
+      console.log(coordinates);
+      
+
+
       // Use the OpenWeatherMap API to fetch weather data
-      const url = `${this.baseURL}/weather?lat=${coordinates.lat}&lon=${coordinates.lon}&units=metric&appid=${this.apiKey}`;
+      //const url = `${this.baseURL}/weather?lat=${coordinates.lat}&lon=${coordinates.lon}&units=metric&appid=${this.apiKey}`;
+      const url = `${this.baseURL}/data/2.5/weather?lat=${coordinates.lat}&lon=${coordinates.lon}&units=metric&appid=${this.apiKey}`;    
+      console.log(url);
       const response = await fetch(url);
+      
       // Handle errors and parse the response
       if (!response.ok) {
         throw new Error('Error fetching weather data');
@@ -170,6 +178,7 @@ class WeatherService {
   private async getWeatherByCoordinates(lat: number, lon: number): Promise<Weather> {
     const coordinates = { lat, lon };
     try {
+      console.log('Hello from getWeatherByCoordinates:');
       const weatherData = await this.fetchWeatherData(coordinates);
       return this.parseCurrentWeather(weatherData);
     } catch (error) {
@@ -187,6 +196,9 @@ class WeatherService {
    * @returns A Weather object representing the current weather
    */
   private parseCurrentWeather(response: any): Weather {
+    if (!response || !response.main || !response.weather || response.weather.length === 0) {
+      throw new Error("Invalid weather data structure received from API.");
+    }
     // Parse the current weather data from the response
     const temp = response.main.temp;
     const description = response.weather[0].description;
@@ -197,7 +209,7 @@ class WeatherService {
 
 // Example usage:
 const weatherService = new WeatherService();
-weatherService.getWeatherForCity('London')
+weatherService.getWeatherForCity("London")
   .then((weather) => console.log(weather))
   .catch((error) => console.error(error));
 
