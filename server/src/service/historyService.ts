@@ -1,53 +1,71 @@
-import * as fs from 'fs';
-
+import { promises as fs } from 'fs';
 
 // TODO: Define a City class with name and id properties
 class City {
-  id: number;
   name: string;
+  id: string;
 
-  constructor(id: number, name: string) {
-    this.id = id;
+  constructor(name: string, id: string) {
     this.name = name;
+    this.id = id;
   }
 }
 
 // TODO: Complete the HistoryService class
 class HistoryService {
-  saveCityToHistory(_cityName: any) {
-    throw new Error('Method not implemented.');
-  }
-    
-    async read() {
-      try {
-        const data = await fs.promises.readFile("db/db.json", 'utf8');
-        return JSON.parse(data);
-      } catch (error) {
-        if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-          return [];
-        }
-        throw error;
-      }
-      
-    } 
-    async write(data: City[]) {
-      await fs.promises.writeFile("db/db.json", JSON.stringify(data));
+  // TODO: Define a read method that reads from the searchHistory.json file
+    private async read() {
+      return await fs.readFile('db/db.json', {
+        flag: 'a+',
+        encoding: 'utf8',
+      });
     }
+  // TODO: Define a write method that writes the updated cities array to the searchHistory.json file
+   private async write(cities: City[]) { 
+    console.log('cities:', cities);
+    return await fs.writeFile('db/db.json', JSON.stringify(cities, null, '\t'));
+   }
 
-  async getCities() {
-    return await this.read();
-  }
-
-  async addCity(city: City) {
+  // TODO: Define a getCities method that reads the cities from the searchHistory.json file and returns them as an array of City objects
+   async getCities() {
+    return await this.read().then((cities) => {
+      console.log('cities:', cities);
+      console.log("typeof cities:", typeof cities);
+      let parsedCities: City[];
+      try {
+        parsedCities = [].concat(JSON.parse(cities));
+      } catch (error) {
+        parsedCities = [];
+      }
+      return parsedCities;
+    })
+   }
+   
+  // TODO Define an addCity method that adds a city to the searchHistory.json file
+   async addCity(city: string) {
+    if (!city) {
+      throw new Error('City name is required');
+    }
     const cities = await this.getCities();
-    cities.push(city);
+    const newCity = new City(city, (cities.length + 1).toString());
+    cities.push(newCity);
     await this.write(cities);
-  }
+    return newCity;
+   }
 
-  async removeCity(id: number) {
-    let cities = await this.getCities();
-    cities = cities.filter((city: { id: number; }) => city.id !== id);
+  // * BONUS TODO: Define a removeCity method that removes a city from the searchHistory.json file
+  async removeCity(id: string) {
+    if (!id) {
+      throw new Error('City ID is required');
+    }
+    const cities = await this.getCities();
+    const cityIndex = cities.findIndex((city) => city.id === id);
+    if (cityIndex === -1) {
+      throw new Error('City ID not found');
+    }
+    const removedCity = cities.splice(cityIndex, 1);
     await this.write(cities);
+    return removedCity;
   }
 }
 

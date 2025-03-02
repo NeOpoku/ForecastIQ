@@ -21,7 +21,7 @@ app.use(express.json()); // Parses JSON requests
 
 
 // TODO: Implement middleware to connect the routes
-app.use('/api',routes); 
+app.use(routes); 
 
 // Start the server on the port
 app.listen(PORT, () => console.log(`Listening on PORT: ${PORT}`));

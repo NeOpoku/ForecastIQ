@@ -7,7 +7,7 @@ const router = Router();
 
 // TODO: Define route to serve index.html
 router.get('/', (_req, res) => {
-    const filePath = path.join(__dirname, '..', 'dist', 'index.html'); // Adjust the path based on your project structure
+    const filePath = path.join(__dirname, '../../../client/dist/index.html'); // Adjust the path based on your project structure
     res.sendFile(filePath);
   });
 
